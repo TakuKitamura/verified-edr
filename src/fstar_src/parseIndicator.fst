@@ -27,18 +27,15 @@ noeq type fstar_uint8 = {
     error: struct_error;
 }
 
-// uint8 parseIndicator(uint32 can_id, uint8 can_dlc, uint8[] data)
 val parseIndicator_body:
   can_id: U32.t ->
   can_dlc: U8.t ->
   data: B.buffer U8.t ->
   
 Stack (fstar_uint8: fstar_uint8) (requires fun h0 -> 
-    // len(data) == 8 && can_id == 0x188 && can_dlc == 4 && get(data, 0) <= 0x02 && get(data, 1) == 0 && get(data, 2) == 0 && get(data, 3) == 0
     B.live h0 data /\ (((B.length data) = (8)) && (U32.eq can_id 0x188ul) && (U8.eq can_dlc 4uy) && (U8.lte (B.get h0 data 0) 0x02uy) && (U8.eq (B.get h0 data 1) 0uy) && (U8.eq (B.get h0 data 2) 0uy) && (U8.eq (B.get h0 data 3) 0uy))
   )
   (ensures fun h0 fstar_uint8 h1 -> 
-    // (fstar_uint8.error.code == 0 && fstar_uint8.value == get(data, 0)) || fstar_uint8.error.code == 1
     (((I32.eq fstar_uint8.error.code 0l) && ((B.get h0 data 0) = fstar_uint8.value)) || (I32.eq fstar_uint8.error.code 1l))
   )
 let parseIndicator_body can_id can_dlc data  =
@@ -50,11 +47,9 @@ val parseIndicator:
   data: B.buffer U8.t ->
   
   Stack (fstar_uint8: fstar_uint8) (requires fun h0 -> 
-    // len(data) == 8 && can_id == 0x188 && can_dlc == 4 && get(data, 0) <= 0x02 && get(data, 1) == 0 && get(data, 2) == 0 && get(data, 3) == 0
-    B.live h0 data /\ (((B.length data) = (8)) && (U32.eq can_id 0x188ul) && (U8.eq can_dlc 4uy) && (U8.lte (B.get h0 data 0) 0x02uy) && (U8.eq (B.get h0 data 1) 0uy) && (U8.eq (B.get h0 data 2) 0uy) && (U8.eq (B.get h0 data 3) 0uy))
+    B.live h0 data /\ (((B.length data) = (8)))
   )
   (ensures fun h0 fstar_uint8 h1 -> 
-    // (fstar_uint8.error.code == 0 && fstar_uint8.value == get(data, 0)) || fstar_uint8.error.code == 1
     (((I32.eq fstar_uint8.error.code 0l) && ((B.get h0 data 0) = fstar_uint8.value)) || (I32.eq fstar_uint8.error.code 1l))
   )
 let parseIndicator can_id can_dlc data  = 
