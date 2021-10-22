@@ -1,6 +1,9 @@
+krml_link = krml -verify -warn-error +9 -drop WasmSupport -tmpdir ./out -fsopt --cache_dir -fsopt ./out -fsopt --cache_checked_modules -skip-linking -skip-compilation -no-prefix
+
+all: parseSpeed parseIndicator parseDoor
 parseSpeed:
-	krml -warn-error +9 -drop WasmSupport -tmpdir ./out -fsopt --cache_dir -fsopt ./out -fsopt --cache_checked_modules -o ./out/parseSpeed -no-prefix ParseSpeed parseSpeed.fst -skip-linking -skip-compilation -verify
+	$(krml_link) ParseSpeed parseSpeed.fst
 parseIndicator:
-	krml -warn-error +9 -drop WasmSupport -tmpdir ./out -fsopt --cache_dir -fsopt ./out -fsopt --cache_checked_modules -o ./out/parseIndicator -no-prefix ParseIndicator parseIndicator.fst -skip-linking -skip-compilation -verify
+	$(krml_link) ParseIndicator parseIndicator.fst
 parseDoor:
-	krml -warn-error +9 -drop WasmSupport -tmpdir ./out -fsopt --cache_dir -fsopt ./out -fsopt --cache_checked_modules -o ./out/parseDoor -no-prefix ParseDoor parseDoor.fst -skip-linking -skip-compilation -verify
+	$(krml_link) ParseDoor parseDoor.fst

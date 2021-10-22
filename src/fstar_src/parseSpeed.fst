@@ -44,8 +44,8 @@ let parseSpeed_body can_id can_dlc data  =
     let value: fstar_int32_array = {
         value = B.alloca 0l 2ul;
         error = {
-            code = 1l;
-            message = !$"invalid arguments";
+            code = 0l;
+            message = !$"";
         };
     } in
     pop_frame ();

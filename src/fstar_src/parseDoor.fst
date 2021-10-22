@@ -40,6 +40,27 @@ Stack (fstar_uint8: fstar_uint8) (requires fun h0 ->
   )
 let parseDoor_body can_id can_dlc data  =
     // TODO: you need to implement this function here
+    let v: U8.t = data.(2ul) in
+    if (U8.eq v 0uy) then
+        (
+            {
+                value = 0uy;
+                error = {
+                    code = 0l;
+                    message = !$"";
+                };
+            }
+        )
+    else
+        (
+            {
+                value = 1uy;
+                error = {
+                    code = 1l;
+                    message = !$"";
+                };
+            }
+        )
 
 val parseDoor: 
   can_id: U32.t ->
@@ -58,4 +79,10 @@ let parseDoor can_id can_dlc data  =
         parseDoor_body can_id can_dlc data 
     else
         // TODO: you need to return an error value here if the preconditions are not met
-
+        {
+            value = 0uy;
+            error = {
+                code = 1l;
+                message = !$"invalid arguments";
+            };
+        }
