@@ -22,8 +22,8 @@ noeq type struct_error = {
   message: C.String.t;
 }
 
-noeq type fstar_int32_array = {
-    value: B.buffer I32.t;
+noeq type fstar_uint8_array = {
+    value: B.buffer U8.t;
     error: struct_error;
 }
 
@@ -32,35 +32,37 @@ val parseSpeed_body:
   can_dlc: U8.t ->
   data: B.buffer U8.t ->
   
-Stack (fstar_int32_array: fstar_int32_array) (requires fun h0 -> 
+Stack (fstar_uint8_array: fstar_uint8_array) (requires fun h0 -> 
     B.live h0 data /\ (((B.length data) = (8)) && (U32.eq can_id 0x1b4ul) && (U8.eq can_dlc 5uy) && (U8.gte (B.get h0 data 1) 0xD0uy) && (U8.eq (B.get h0 data 2) 0uy) && (U8.eq (B.get h0 data 3) 0uy) && (U8.eq (B.get h0 data 4) 0uy))
   )
-  (ensures fun h0 fstar_int32_array h1 -> 
-    (((I32.eq fstar_int32_array.error.code 0l) && ((B.length fstar_int32_array.value) = (2))) || (I32.eq fstar_int32_array.error.code 1l))
+  (ensures fun h0 fstar_uint8_array h1 -> 
+    (((I32.eq fstar_uint8_array.error.code 0l) && ((B.length fstar_uint8_array.value) = (2))) || (I32.eq fstar_uint8_array.error.code 1l))
   )
 let parseSpeed_body can_id can_dlc data  =
     // TODO: you need to implement this function here
     push_frame();
-    let value: fstar_int32_array = {
-        value = B.alloca 0l 2ul;
+    let ret: B.buffer U8.t = B.alloca 0uy 2ul in
+    ret.(0ul) <- data.(0ul);
+    ret.(1ul) <- data.(1ul);
+    pop_frame ();
+    {
+        value = ret;
         error = {
             code = 0l;
             message = !$"";
         };
-    } in
-    pop_frame ();
-    value
+    } 
 
 val parseSpeed: 
   can_id: U32.t ->
   can_dlc: U8.t ->
   data: B.buffer U8.t ->
   
-  Stack (fstar_int32_array: fstar_int32_array) (requires fun h0 -> 
+  Stack (fstar_uint8_array: fstar_uint8_array) (requires fun h0 -> 
     B.live h0 data /\ (((B.length data) = (8)))
   )
-  (ensures fun h0 fstar_int32_array h1 -> 
-    (((I32.eq fstar_int32_array.error.code 0l) && ((B.length fstar_int32_array.value) = (2))) || (I32.eq fstar_int32_array.error.code 1l))
+  (ensures fun h0 fstar_uint8_array h1 -> 
+    (((I32.eq fstar_uint8_array.error.code 0l) && ((B.length fstar_uint8_array.value) = (2))) || (I32.eq fstar_uint8_array.error.code 1l))
   )
 let parseSpeed can_id can_dlc data  = 
     // meet the preconditions

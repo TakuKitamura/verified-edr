@@ -40,11 +40,12 @@ Stack (fstar_uint8: fstar_uint8) (requires fun h0 ->
   )
 let parseDoor_body can_id can_dlc data  =
     // TODO: you need to implement this function here
-    let v: U8.t = data.(2ul) in
-    if (U8.eq v 0uy) then
+    let door_state: U8.t = data.(2ul) in
+    let ret: U8.t = door_state in
+    if (U8.eq door_state ret) then
         (
             {
-                value = 0uy;
+                value = ret;
                 error = {
                     code = 0l;
                     message = !$"";
@@ -57,7 +58,7 @@ let parseDoor_body can_id can_dlc data  =
                 value = 1uy;
                 error = {
                     code = 1l;
-                    message = !$"";
+                    message = !$"invalid door state";
                 };
             }
         )

@@ -40,11 +40,12 @@ Stack (fstar_uint8: fstar_uint8) (requires fun h0 ->
   )
 let parseIndicator_body can_id can_dlc data  =
     // TODO: you need to implement this function here
-    let v: U8.t = data.(0ul) in
-    if (U8.eq v 0uy) then
+    let indicatorState: U8.t = data.(0ul) in
+    let ret: U8.t = indicatorState in
+    if (U8.eq indicatorState ret) then
         (
             {
-                value = 0uy;
+                value = ret;
                 error = {
                     code = 0l;
                     message = !$"";
