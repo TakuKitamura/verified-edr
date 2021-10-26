@@ -1,7 +1,7 @@
 ## Variable that points to SystemC installation path
 
 
-INCDIR = -I. -I$(SRCS_base_DIR) -I$(SRCS_base_DIRSRC) -I$(SRCS_generated_DIR) -I$(Kremlin) -I$(SRCS_fstar_DIR)
+INCDIR = -I. -I$(SRCS_base_DIR) -I$(SRCS_base_DIRSRC) -I$(SRCS_generated_DIR) -I$(Kremlin) -I$(SRCS_fstar_DIR) -I$(SRCS_misrac_DIR)
 LIBDIR = -L. -L.. 
 LIBS   =  -lm $(EXTRA_LIBS)
 

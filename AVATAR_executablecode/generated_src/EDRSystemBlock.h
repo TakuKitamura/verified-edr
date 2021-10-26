@@ -18,6 +18,7 @@
 #include "ParseDoor.h"
 #include "ParseIndicator.h"
 #include "ParseSpeed.h"
+#include "packetCapture.h"
 
 extern void *mainFunc__EDRSystemBlock(void *arg);
 __attribute__((unused)) request __req0__EDRSystemBlock;

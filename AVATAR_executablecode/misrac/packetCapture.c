@@ -9,16 +9,7 @@
 #include <errno.h>
 #include <time.h>
 
-#include <linux/can.h>
-#include <linux/can/raw.h>
-
-struct can_packet
-{
-    canid_t can_id; /* 32 bit CAN_ID + EFF/RTR/ERR flags */
-    __u8 can_dlc;   /* data length code: 0 .. 8 */
-    __u8 data[8] __attribute__((aligned(8)));
-    time_t timestamp;
-};
+#include "packetCapture.h"
 
 int getSocket()
 {
@@ -42,13 +33,13 @@ int getSocket()
     return s;
 }
 
-struct can_packet packetCapture(int fd)
+can_packet packetCapture(int fd)
 {
-    struct can_packet frame;
+    can_packet frame;
     // CANパケットキャプチャ
     while (1)
     {
-        ssize_t n = read(fd, &frame, sizeof(struct can_packet));
+        ssize_t n = read(fd, &frame, sizeof(can_packet));
         time(&frame.timestamp);
         if (n != -1)
         {
@@ -63,7 +54,7 @@ struct can_packet packetCapture(int fd)
     return frame;
 }
 
-void printFrame(struct can_packet frame)
+void printFrame(can_packet frame)
 {
     printf("can_id = 0x%x, can_dlc %d, can_data = [", frame.can_id, frame.can_dlc);
     for (int i = 0; i < 8; i++)
