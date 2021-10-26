@@ -80,12 +80,12 @@ void printFrame(struct can_packet frame)
     }
 }
 
-int main(void)
-{
-    int fd = getSocket();
-    while (1)
-    {
-        struct can_packet frame = packetCapture(fd);
-        printFrame(frame);
-    }
-}
+// int main(void)
+// {
+//     int fd = getSocket();
+//     while (1)
+//     {
+//         struct can_packet frame = packetCapture(fd);
+//         printFrame(frame);
+//     }
+// }

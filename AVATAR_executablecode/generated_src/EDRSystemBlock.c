@@ -19,7 +19,6 @@
 
 void *mainFunc__EDRSystemBlock(void *arg)
 {
-    can_frame canFrame;
     uint32_t canID;
     uint8_t canDLC;
     uint8_t *data;
@@ -31,6 +30,7 @@ void *mainFunc__EDRSystemBlock(void *arg)
     int32_t recordInEDRResult;
     int32_t fd;
     int64_t timestamp;
+    can_packet canPacket;
 
     int __currentState = STATE__START__STATE;
 
@@ -56,28 +56,28 @@ void *mainFunc__EDRSystemBlock(void *arg)
             break;
 
         case STATE__PacketCaptureState:
-            canFrame = packetCapture(fd);
-            canID = canFrame.can_id;
-            canDLC = canFrame.can_dlc;
-            data = canFrame.data;
-            timestamp = canFrame.timestamp;
+            canPacket = packetCapture(fd);
+            canID = canPacket.can_id;
+            canDLC = canPacket.can_dlc;
+            data = canPacket.data;
+            timestamp = canPacket.timestamp;
             __currentState = STATE__PacketParseState;
             break;
 
         case STATE__PacketParseState:
             if (canID == 0x1b4)
             {
-                makeNewRequest(&__req0__EDRSystemBlock, 278, IMMEDIATE, 0, 0, 0, 0, __params0__EDRSystemBlock);
+                makeNewRequest(&__req0__EDRSystemBlock, 624, IMMEDIATE, 0, 0, 0, 0, __params0__EDRSystemBlock);
                 addRequestToList(&__list__EDRSystemBlock, &__req0__EDRSystemBlock);
             }
             if (canID == 0x188)
             {
-                makeNewRequest(&__req1__EDRSystemBlock, 282, IMMEDIATE, 0, 0, 0, 0, __params1__EDRSystemBlock);
+                makeNewRequest(&__req1__EDRSystemBlock, 628, IMMEDIATE, 0, 0, 0, 0, __params1__EDRSystemBlock);
                 addRequestToList(&__list__EDRSystemBlock, &__req1__EDRSystemBlock);
             }
             if (canID == 0x19b)
             {
-                makeNewRequest(&__req2__EDRSystemBlock, 286, IMMEDIATE, 0, 0, 0, 0, __params2__EDRSystemBlock);
+                makeNewRequest(&__req2__EDRSystemBlock, 632, IMMEDIATE, 0, 0, 0, 0, __params2__EDRSystemBlock);
                 addRequestToList(&__list__EDRSystemBlock, &__req2__EDRSystemBlock);
             }
             if (nbOfRequests(&__list__EDRSystemBlock) == 0)
@@ -112,12 +112,12 @@ void *mainFunc__EDRSystemBlock(void *arg)
         case STATE__CheckValidationResultState:
             if (code == 0)
             {
-                makeNewRequest(&__req0__EDRSystemBlock, 340, IMMEDIATE, 0, 0, 0, 0, __params0__EDRSystemBlock);
+                makeNewRequest(&__req0__EDRSystemBlock, 686, IMMEDIATE, 0, 0, 0, 0, __params0__EDRSystemBlock);
                 addRequestToList(&__list__EDRSystemBlock, &__req0__EDRSystemBlock);
             }
             if (code > 0)
             {
-                makeNewRequest(&__req1__EDRSystemBlock, 343, IMMEDIATE, 0, 0, 0, 0, __params1__EDRSystemBlock);
+                makeNewRequest(&__req1__EDRSystemBlock, 689, IMMEDIATE, 0, 0, 0, 0, __params1__EDRSystemBlock);
                 addRequestToList(&__list__EDRSystemBlock, &__req1__EDRSystemBlock);
             }
             if (nbOfRequests(&__list__EDRSystemBlock) == 0)
@@ -146,17 +146,17 @@ void *mainFunc__EDRSystemBlock(void *arg)
         case STATE__CheckRecordInEDRResultState:
             if (recordInEDRResult == 0)
             {
-                makeNewRequest(&__req0__EDRSystemBlock, 255, IMMEDIATE, 0, 0, 0, 0, __params0__EDRSystemBlock);
+                makeNewRequest(&__req0__EDRSystemBlock, 601, IMMEDIATE, 0, 0, 0, 0, __params0__EDRSystemBlock);
                 addRequestToList(&__list__EDRSystemBlock, &__req0__EDRSystemBlock);
             }
             if (recordInEDRResult == 1)
             {
-                makeNewRequest(&__req1__EDRSystemBlock, 260, IMMEDIATE, 0, 0, 0, 0, __params1__EDRSystemBlock);
+                makeNewRequest(&__req1__EDRSystemBlock, 606, IMMEDIATE, 0, 0, 0, 0, __params1__EDRSystemBlock);
                 addRequestToList(&__list__EDRSystemBlock, &__req1__EDRSystemBlock);
             }
             if (recordInEDRResult == 2)
             {
-                makeNewRequest(&__req2__EDRSystemBlock, 264, IMMEDIATE, 0, 0, 0, 0, __params2__EDRSystemBlock);
+                makeNewRequest(&__req2__EDRSystemBlock, 610, IMMEDIATE, 0, 0, 0, 0, __params2__EDRSystemBlock);
                 addRequestToList(&__list__EDRSystemBlock, &__req2__EDRSystemBlock);
             }
             if (nbOfRequests(&__list__EDRSystemBlock) == 0)

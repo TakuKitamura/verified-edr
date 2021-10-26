@@ -10,12 +10,12 @@ EXE    = $(MODULE).x
 .SUFFIXES: .c .o .x
 
 
-$(EXE): makedir $(OBJS_fstar) $(OBJS) $(OBJS_executor) 
+$(EXE): makedir $(OBJS_fstar) $(OBJS_misrac) $(OBJS) $(OBJS_executor) 
 ifeq ($(UNAME),Darwin)
-	$(CC) $(LFLAGS_MAC) $(INCDIR) $(LIBDIR) -o $@ $(OBJS) $(OBJS_executor) $(OBJS_fstar) $(LIBS) 2>&1 | c++filt
+	$(CC) $(LFLAGS_MAC) $(INCDIR) $(LIBDIR) -o $@ $(OBJS) $(OBJS_executor) $(OBJS_fstar) $(OBJS_misrac) $(LIBS) 2>&1 | c++filt
 endif
 ifneq ($(UNAME),Darwin)
-	$(CC) $(LFLAGS_UNIX) $(INCDIR) $(LIBDIR) -o $@ $(OBJS) $(OBJS_executor) $(OBJS_fstar) $(LIBS) 2>&1 | c++filt
+	$(CC) $(LFLAGS_UNIX) $(INCDIR) $(LIBDIR) -o $@ $(OBJS) $(OBJS_executor) $(OBJS_fstar) $(OBJS_misrac) $(LIBS) 2>&1 | c++filt
 endif
 
 makedir:
@@ -24,13 +24,13 @@ makedir:
 	mkdir -p ./lib/$(SRCS_generated_DIR)
 	mkdir -p ./lib/$(SRCS_base_DIRSRC)
 	mkdir -p ./lib/$(SRCS_fstar_DIR)
+	mkdir -p ./lib/$(SRCS_misrac_DIR)
 
 lib/%.o: ./%.c
 	$(CC) $(CFLAGS) $(INCDIR) -o $@ -c $<
 
 
 clean:
-	rm -f $(OBJS_simulator) $(OBJS_executor) $(OBJS_fstar) $(OBJS) *~ $(EXE) core 
 	rm -rf lib
 
 ultraclean: clean
