@@ -4,6 +4,7 @@ open LowStar.BufferOps
 open FStar.HyperStack.ST
 open LowStar.Printf
 open C.String
+open HardCoding
 
 module I8 = FStar.Int8
 module I16 = FStar.Int16
@@ -16,16 +17,6 @@ module U32 = FStar.UInt32
 module U64 = FStar.UInt64
 
 module B = LowStar.Buffer
-
-noeq type struct_error = {
-  code: I32.t;
-  message: C.String.t;
-}
-
-noeq type fstar_uint8_array = {
-    value: B.buffer U8.t;
-    error: struct_error;
-}
 
 val parseSpeed_body:
   can_id: U32.t ->

@@ -5,26 +5,25 @@
   KreMLin version: bf7d50e8
  */
 
-#ifndef __C_H
-#define __C_H
+#ifndef __HardCoding_H
+#define __HardCoding_H
 
 #include "kremlib.h"
 
 
 
 
-extern void portable_exit(int32_t uu___);
+typedef struct struct_error_s
+{
+  int32_t code;
+  C_String_t message;
+}
+struct_error;
 
-extern char char_of_uint8(uint8_t uu___);
+int32_t __proj__Mkstruct_error__item__code(struct_error projectee);
 
-extern uint8_t uint8_of_char(char uu___);
-
-bool uu___is_EXIT_SUCCESS(exit_code projectee);
-
-bool uu___is_EXIT_FAILURE(exit_code projectee);
-
-extern void print_bytes(uint8_t *b, uint32_t len);
+C_String_t __proj__Mkstruct_error__item__message(struct_error projectee);
 
 
-#define __C_H_DEFINED
+#define __HardCoding_H_DEFINED
 #endif

@@ -4,6 +4,7 @@ open LowStar.BufferOps
 open FStar.HyperStack.ST
 open LowStar.Printf
 open C.String
+open HardCoding
 
 module I8 = FStar.Int8
 module I16 = FStar.Int16
@@ -17,22 +18,12 @@ module U64 = FStar.UInt64
 
 module B = LowStar.Buffer
 
-noeq type struct_error = {
-  code: I32.t;
-  message: C.String.t;
-}
-
-noeq type fstar_uint8 = {
-    value: U8.t;
-    error: struct_error;
-}
-
 val parseIndicator_body:
   can_id: U32.t ->
   can_dlc: U8.t ->
   data: B.buffer U8.t ->
   
-Stack (fstar_uint8: fstar_uint8) (requires fun h0 -> 
+Stack fstar_uint8 (requires fun h0 -> 
     B.live h0 data /\
     (((B.length data) = (8)) &&
     (U32.eq can_id 0x188ul) &&
@@ -77,7 +68,7 @@ val parseIndicator:
   can_dlc: U8.t ->
   data: B.buffer U8.t ->
   
-  Stack (fstar_uint8: fstar_uint8) (requires fun h0 -> 
+  Stack fstar_uint8 (requires fun h0 -> 
     B.live h0 data /\
     (((B.length data) = (8)))
   )

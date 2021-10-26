@@ -5,26 +5,15 @@
   KreMLin version: bf7d50e8
  */
 
-#ifndef __C_H
-#define __C_H
+#include "HardCoding.h"
 
-#include "kremlib.h"
+int32_t __proj__Mkstruct_error__item__code(struct_error projectee)
+{
+  return projectee.code;
+}
 
+C_String_t __proj__Mkstruct_error__item__message(struct_error projectee)
+{
+  return projectee.message;
+}
 
-
-
-extern void portable_exit(int32_t uu___);
-
-extern char char_of_uint8(uint8_t uu___);
-
-extern uint8_t uint8_of_char(char uu___);
-
-bool uu___is_EXIT_SUCCESS(exit_code projectee);
-
-bool uu___is_EXIT_FAILURE(exit_code projectee);
-
-extern void print_bytes(uint8_t *b, uint32_t len);
-
-
-#define __C_H_DEFINED
-#endif
