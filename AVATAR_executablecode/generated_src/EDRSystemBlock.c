@@ -29,7 +29,7 @@ void *mainFunc__EDRSystemBlock(void *arg){
   uint8_t* message;
   int32_t recordInEDRResult;
   int32_t fd;
-  int64 timestamp;
+  int64_t timestamp;
   
   int __currentState = STATE__START__STATE;
   
