@@ -42,7 +42,7 @@ INCDIR = -I. -I$(SRCS_base_DIR) -I$(SRCS_base_DIRSRC) -I$(SRCS_generated_DIR) -I
 LIBDIR = -L. -L..
 LIBS   =  -lm $(EXTRA_LIBS)
 
-EXE    = $(MODULE).x
+EXE    = verified-edr
 
 .SUFFIXES: .c .o .x
 
