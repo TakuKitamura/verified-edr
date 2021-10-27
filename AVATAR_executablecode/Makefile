@@ -21,13 +21,17 @@ MODULE = run
 SRCS_generated_DIR = generated_src
 SRCS_fstar_DIR = fstar/out
 SRCS_misrac_DIR = misrac
-include Makefile.src
+SRCS_rust_DIR = rust
+# include Makefile.src
 SRCS_base_DIRSRC = src
 SRCS_base = $(foreach dir, $(SRCS_base_DIRSRC), $(wildcard $(dir)/*.c))
 SRCS_fstar = $(foreach dir, $(SRCS_fstar_DIR), $(wildcard $(dir)/*.c))
 SRCS_misrac = $(foreach dir, $(SRCS_misrac_DIR), $(wildcard $(dir)/*.c))
+SRCS = $(foreach dir, $(SRCS_generated_DIR), $(wildcard $(dir)/*.c))
 SRCS_base_DIR = .
-Kremlin = $(KREMLIN_HOME)/include
+Kremlin_INCLUDE = $(KREMLIN_HOME)/include
+Rust_INCLUDE = $(SRCS_rust_DIR)/include
+Rust_static_LIB = $(SRCS_rust_DIR)/target/release/librust.a
 OBJS_executor = $(SRCS_base:%.c=lib/%.o)
 OBJS = $(SRCS:%.c=lib/%.o)
 OBJS_fstar = $(SRCS_fstar:%.c=lib/%.o)

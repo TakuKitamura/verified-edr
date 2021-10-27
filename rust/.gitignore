@@ -17,4 +17,4 @@ Cargo.lock
 a.out
 
 # generated header
-rust.h
+include
