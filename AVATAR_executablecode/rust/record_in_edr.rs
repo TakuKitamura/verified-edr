@@ -4,7 +4,8 @@ use std::sync::Mutex;
 use std::fs::OpenOptions;
 use std::io::prelude::*;
 
-fn record_in_edr(can_id: u32, timestamp: i64, speed: &[u8], indicator: u8, door: u8) -> i32 {
+#[no_mangle]
+pub extern "C" fn record_in_edr(can_id: u32, timestamp: i64, speed: &[u8], indicator: u8, door: u8) -> i32 {
     struct EventData {
         can_id: u32,
         timestamp: i64,
@@ -132,6 +133,3 @@ fn record_in_edr(can_id: u32, timestamp: i64, speed: &[u8], indicator: u8, door:
     return 0;
 }
 
-fn main() {
-    println!("Hello, world!");
-}
