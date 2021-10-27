@@ -3,9 +3,16 @@ use std::sync::Mutex;
 
 use std::fs::OpenOptions;
 use std::io::prelude::*;
+use std::slice;
 
 #[no_mangle]
-pub extern "C" fn record_in_edr(can_id: u32, timestamp: i64, speed: &[u8], indicator: u8, door: u8) -> i32 {
+pub extern "C" fn record_in_edr(
+    can_id: u32,
+    timestamp: i64,
+    speed: *const u8,
+    indicator: u8,
+    door: u8,
+) -> i32 {
     struct EventData {
         can_id: u32,
         timestamp: i64,
@@ -24,9 +31,16 @@ pub extern "C" fn record_in_edr(can_id: u32, timestamp: i64, speed: &[u8], indic
     if can_id == 0x1B4 {
         // speed
 
+        if speed.is_null() {
+            eprintln!("speed value is null");
+            return 2;
+        }
+
         if *before_speed_index == 0 {
             *before_speed_index = event_data.len();
         }
+
+        let speed = unsafe { slice::from_raw_parts(speed, 2) };
 
         let first_speed_byte: f64 = speed[0] as f64;
         let second_speed_byte: f64 = speed[1] as f64;
@@ -132,4 +146,3 @@ pub extern "C" fn record_in_edr(can_id: u32, timestamp: i64, speed: &[u8], indic
 
     return 0;
 }
-

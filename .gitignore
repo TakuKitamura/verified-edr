@@ -56,6 +56,7 @@ out.krml
 *.i*86
 *.x86_64
 *.hex
+verified-edr
 
 # Debug files
 *.dSYM/
