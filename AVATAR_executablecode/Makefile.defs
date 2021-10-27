@@ -28,7 +28,7 @@ makedir:
 	mkdir -p ./lib/$(SRCS_rust_DIR)
 
 buildRust:
-	make -C rust-build
+	make -C rust
 
 lib/%.o: ./%.c
 	# make -C fstar
