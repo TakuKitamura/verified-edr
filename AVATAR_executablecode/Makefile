@@ -18,11 +18,11 @@ LFLAGS_UNIX = $(LOPT_UNIX) $(OTHER) $(TRY)
 OBJDIR = lib
 
 MODULE = run
-SRCS_generated_DIR = generated_src/
+SRCS_generated_DIR = generated_src
 SRCS_fstar_DIR = fstar/out
 SRCS_misrac_DIR = misrac
 include Makefile.src
-SRCS_base_DIRSRC = src/
+SRCS_base_DIRSRC = src
 # SRCS_base = src/request.c src/message.c src/myerrors.c src/debug.c src/syncchannel.c src/asyncchannel.c src/request_manager.c src/random.c src/mytimelib.c src/tracemanager.c
 SRCS_base = $(foreach dir, $(SRCS_base_DIRSRC), $(wildcard $(dir)/*.c))
 # SRCS_fstar = fstar/out/C.c fstar/out/HardCoding.c fstar/out/ParseDoor.c fstar/out/ParseIndicator.c fstar/out/ParseSpeed.c
