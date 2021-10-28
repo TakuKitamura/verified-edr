@@ -1,12 +1,12 @@
-CC     = /usr/bin/gcc
+CC     = /usr/bin/clang
 #CC     = test2.sh
 #CC = /packages/gcc_3.2.2/bin/g++32
-OPT    = -O1 -pthread
+OPT    = -O2 -pthread
 # Solaris
-#LOPT   = -O1 -pthread -ldl -lnsl -lsocket
+#LOPT   = -O2 -pthread -ldl -lnsl -lsocket
 #Linux
-LOPT_UNIX   = -O1 -pthread -ldl -lm
-LOPT_MAC = -O1 -pthread -ldl
+LOPT_UNIX   = -O2 -pthread -ldl -lm -s
+LOPT_MAC = -O2 -pthread -ldl -s
 
 DEBUG  = -g
 OTHER  = -Wall
@@ -39,7 +39,7 @@ OBJS_misrac = $(SRCS_misrac:%.c=lib/%.o)
 
 EXTRA_LIBS = -lrust -ldl
 INCDIR = -I. -I$(SRCS_base_DIR) -I$(SRCS_base_DIRSRC) -I$(SRCS_generated_DIR) -I$(Kremlin_INCLUDE) -I$(SRCS_fstar_DIR) -I$(SRCS_misrac_DIR) -I$(Rust_INCLUDE)
-LIBDIR = -L. -L..
+LIBDIR = -L. -L.. -Lrust/target/release -Wl,-rpath rust/target/release
 LIBS   =  -lm $(EXTRA_LIBS)
 
 EXE    = verified-edr
