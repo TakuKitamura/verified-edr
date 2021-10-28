@@ -37,33 +37,17 @@ pub extern "C" fn record_in_edr(
 
     if can_id == 0x1B4 {
         // speed
-
-        // if speed.is_null() {
-        //     eprintln!("speed value is null");
-        //     return 2;
-        // }
-
         if *before_speed_index == 0 {
             *before_speed_index = event_data.len();
         }
 
-        // let speed = unsafe { slice::from_raw_parts(speed, 2) };
-
-        // let first_speed_byte: f64 = speed[0] as f64;
-        // let second_speed_byte: f64 = speed[1] as f64;
-
-        // let mph_speed: f64 = // mile/h
-        // (((second_speed_byte - (0xD0 as f64)) * (0xFF as f64)) + first_speed_byte) / (0x10 as f64);
-
         // 0x10で割る前の値がspeedなので0x10で割る
         let mph_speed: f64 = (speed as f64) / (0x10 as f64);
-
-        let km_speed: f64 = mph_speed / 2.237; // m/s^2
 
         event_data.push(EventData {
             can_id: can_id,
             timestamp: timestamp,
-            speed: km_speed,
+            speed: mph_speed,
             indicator: 0,
             door: 0,
         });
@@ -90,22 +74,6 @@ pub extern "C" fn record_in_edr(
 
             // loop event_data
             for i in 0..event_data.len() {
-                // Convert the timestamp string into an i64
-                // let timestamp = "1524820690".parse::<i64>().unwrap();
-
-                // Create a NaiveDateTime from the timestamp
-                // let recordedTimestamp = event_data[i].timestamp;
-                // let naive = NaiveDateTime::from_timestamp(event_data[i].timestamp, 0);
-
-                // Create a normal DateTime from the NaiveDateTime
-                // let datetime: DateTime<Utc> = DateTime::from_utc(event_data[i].timestamp, Utc);
-
-                // // Format the datetime how you want
-                // let newdate = datetime.format("%Y-%m-%d %H:%M:%S");
-
-                // // Print the newly formatted date and time
-                // println!("{}", newdate);
-
                 let event_can_id = event_data[i].can_id;
                 if event_can_id == 0x1B4 {
                     // speed
@@ -144,7 +112,7 @@ pub extern "C" fn record_in_edr(
 
         let before_speed: f64 = event_data[*before_speed_index].speed;
 
-        let speed_delta: f64 = // m/s^2
+        let speed_delta: f64 =
         event_data[event_data.len() - 1].speed - before_speed;
 
         // TODO: 衝突と判定する速度変化を決める
