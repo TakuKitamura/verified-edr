@@ -59,59 +59,6 @@ pub extern "C" fn record_in_edr(
             door: 0,
         });
 
-        // EDRへ書き込み
-        if crashed {
-            let before_time = event_data[event_data.len() - 1].timestamp;
-
-            let crash_timestamp = event_data[crashed_index as usize].timestamp;
-
-            if before_time - crash_timestamp >= Duration::seconds(5) {
-                let file_name = "edr.csv";
-                let _ = fs::remove_file(file_name);
-                let mut file = OpenOptions::new()
-                    .write(true)
-                    .append(true)
-                    .create_new(true)
-                    .open(file_name)
-                    .unwrap();
-
-                if let Err(e) = writeln!(file, "TIMESTAMP,CRASHED,EVENT_NAME,VALUE") {
-                    eprintln!("couldn't write to file: {}", e);
-                    return 2;
-                }
-
-                // loop event_data
-                for i in 0..event_data.len() {
-                    let event_can_id = event_data[i].can_id;
-                    // speed
-                    if let Err(e) = writeln!(
-                        file,
-                        "{},{},{},{}",
-                        event_data[i].timestamp,
-                        if event_can_id == speed_id {
-                            "SPEED"
-                        } else if event_can_id == indicator_id {
-                            "INDICATOR"
-                        } else {
-                            "DOOR"
-                        },
-                        event_data[i].crashed,
-                        if event_can_id == speed_id {
-                            event_data[i].speed.to_string()
-                        } else if event_can_id == indicator_id {
-                            event_data[i].indicator.to_string()
-                        } else {
-                            event_data[i].door.to_string()
-                        },
-                    ) {
-                        eprintln!("couldn't write speed data to file: {}", e);
-                        return 2;
-                    }
-                }
-                return 1;
-            }
-        }
-
         let last_item_index = event_data.len() - 1;
 
         let now_speed = event_data[last_item_index].speed;
@@ -154,6 +101,7 @@ pub extern "C" fn record_in_edr(
             door: door,
         });
     } else {
+        eprintln!("unknown id");
         return 2;
     }
 
@@ -170,6 +118,59 @@ pub extern "C" fn record_in_edr(
         };
         if index != -1 {
             event_data.remove(index as usize);
+        }
+    }
+
+    // EDRへ書き込み
+    if crashed {
+        let before_time = event_data[event_data.len() - 1].timestamp;
+
+        let crash_timestamp = event_data[crashed_index as usize].timestamp;
+
+        if before_time - crash_timestamp >= Duration::seconds(5) {
+            let file_name = "edr.csv";
+            let _ = fs::remove_file(file_name);
+            let mut file = OpenOptions::new()
+                .write(true)
+                .append(true)
+                .create_new(true)
+                .open(file_name)
+                .unwrap();
+
+            if let Err(e) = writeln!(file, "TIMESTAMP,CRASHED,EVENT_NAME,VALUE") {
+                eprintln!("couldn't write to file: {}", e);
+                return 2;
+            }
+
+            // loop event_data
+            for i in 0..event_data.len() {
+                let event_can_id = event_data[i].can_id;
+                // speed
+                if let Err(e) = writeln!(
+                    file,
+                    "{},{},{},{}",
+                    event_data[i].timestamp,
+                    if event_can_id == speed_id {
+                        "SPEED"
+                    } else if event_can_id == indicator_id {
+                        "INDICATOR"
+                    } else {
+                        "DOOR"
+                    },
+                    event_data[i].crashed,
+                    if event_can_id == speed_id {
+                        event_data[i].speed.to_string()
+                    } else if event_can_id == indicator_id {
+                        event_data[i].indicator.to_string()
+                    } else {
+                        event_data[i].door.to_string()
+                    },
+                ) {
+                    eprintln!("couldn't write speed data to file: {}", e);
+                    return 2;
+                }
+            }
+            return 1;
         }
     }
 
