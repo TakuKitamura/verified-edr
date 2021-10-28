@@ -9,7 +9,7 @@ use std::slice;
 pub extern "C" fn record_in_edr(
     can_id: u32,
     timestamp: i64,
-    speed: *const u8,
+    speed: u16,
     indicator: u8,
     door: u8,
 ) -> i32 {
@@ -31,22 +31,25 @@ pub extern "C" fn record_in_edr(
     if can_id == 0x1B4 {
         // speed
 
-        if speed.is_null() {
-            eprintln!("speed value is null");
-            return 2;
-        }
+        // if speed.is_null() {
+        //     eprintln!("speed value is null");
+        //     return 2;
+        // }
 
         if *before_speed_index == 0 {
             *before_speed_index = event_data.len();
         }
 
-        let speed = unsafe { slice::from_raw_parts(speed, 2) };
+        // let speed = unsafe { slice::from_raw_parts(speed, 2) };
 
-        let first_speed_byte: f64 = speed[0] as f64;
-        let second_speed_byte: f64 = speed[1] as f64;
+        // let first_speed_byte: f64 = speed[0] as f64;
+        // let second_speed_byte: f64 = speed[1] as f64;
 
-        let mph_speed: f64 = // mile/h
-        (((second_speed_byte - (0xD0 as f64)) * (0xFF as f64)) + first_speed_byte) / (0x10 as f64);
+        // let mph_speed: f64 = // mile/h
+        // (((second_speed_byte - (0xD0 as f64)) * (0xFF as f64)) + first_speed_byte) / (0x10 as f64);
+
+        // 0x10で割る前の値がspeedなので0x10で割る
+        let mph_speed: f64 = (speed as f64) / (0x10 as f64);
 
         let km_speed: f64 = mph_speed / 2.237; // m/s^2
 

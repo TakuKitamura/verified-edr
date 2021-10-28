@@ -4,6 +4,7 @@ open LowStar.BufferOps
 open FStar.HyperStack.ST
 open LowStar.Printf
 open C.String
+open FStar.Int.Cast
 open HardCoding
 
 module I8 = FStar.Int8
@@ -22,10 +23,9 @@ val parseSpeed_body:
   can_id: U32.t ->
   can_dlc: U8.t ->
   data: B.buffer U8.t ->
-  
-Stack (fstar_uint8_array: fstar_uint8_array) (requires fun h0 -> 
-    B.live h0 data /\
-    (((B.length data) = (8)) &&
+
+Stack fstar_uint16 (requires fun h0 ->
+    B.live h0 data /\ (((B.length data) = (8)) &&
     (U32.eq can_id 0x1b4ul) &&
     (U8.eq can_dlc 5uy) &&
     (U8.gte (B.get h0 data 1) 0xD0uy) &&
@@ -33,17 +33,22 @@ Stack (fstar_uint8_array: fstar_uint8_array) (requires fun h0 ->
     (U8.eq (B.get h0 data 3) 0uy) &&
     (U8.eq (B.get h0 data 4) 0uy))
   )
-  (ensures fun h0 fstar_uint8_array h1 -> 
-    (((I32.eq fstar_uint8_array.error.code 0l) &&
-    ((B.length fstar_uint8_array.value) = (2))) ||
-    (I32.eq fstar_uint8_array.error.code 1l))
+  (ensures fun h0 fstar_uint16 h1 ->
+    (((I32.eq fstar_uint16.error.code 0l) &&
+    (U16.lte fstar_uint16.value 0x2fd0us)) ||
+    (I32.eq fstar_uint16.error.code 1l))
   )
 let parseSpeed_body can_id can_dlc data  =
     // TODO: you need to implement this function here
-    push_frame();
-    let ret: B.buffer U8.t = B.alloca 0uy 2ul in
-    ret.(0ul) <- data.(0ul);
-    ret.(1ul) <- data.(1ul);
+    push_frame ();
+    let first_speed_byte_u8: U8.t = data.(0ul) in
+    let second_speed_byte_u8: U8.t = data.(1ul) in
+    let first_speed_byte_u16: U16.t = uint8_to_uint16 first_speed_byte_u8 in
+    let second_speed_byte_u16: U16.t = uint8_to_uint16 second_speed_byte_u8 in
+    let ret: U16.t = U16.(
+        ((second_speed_byte_u16 -^ 0xd0us) *^ 0xffus) +^ 
+        first_speed_byte_u16
+    ) in
     pop_frame ();
     {
         value = ret;
@@ -53,19 +58,18 @@ let parseSpeed_body can_id can_dlc data  =
         };
     } 
 
-val parseSpeed: 
+val parseSpeed:
   can_id: U32.t ->
   can_dlc: U8.t ->
   data: B.buffer U8.t ->
-  
-  Stack (fstar_uint8_array: fstar_uint8_array) (requires fun h0 -> 
-    B.live h0 data /\
-    (((B.length data) = (8)))
+
+  Stack fstar_uint16 (requires fun h0 ->
+    B.live h0 data /\ (((B.length data) = (8)))
   )
-  (ensures fun h0 fstar_uint8_array h1 -> 
-    (((I32.eq fstar_uint8_array.error.code 0l) &&
-    ((B.length fstar_uint8_array.value) = (2))) ||
-    (I32.eq fstar_uint8_array.error.code 1l))
+  (ensures fun h0 fstar_uint16 h1 ->
+    (((I32.eq fstar_uint16.error.code 0l) &&
+    (U16.lte fstar_uint16.value 0x2fd0us)) ||
+    (I32.eq fstar_uint16.error.code 1l))
   )
 let parseSpeed can_id can_dlc data  = 
     // meet the preconditions
@@ -83,7 +87,7 @@ let parseSpeed can_id can_dlc data  =
     else
         // TODO: you need to return an error value here if the preconditions are not met
         {
-            value = B.null;
+            value = 0us;
             error = {
             code = 1l;
                 message = !$"invalid arguments";
