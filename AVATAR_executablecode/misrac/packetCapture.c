@@ -8,7 +8,7 @@
 #include <sys/ioctl.h>
 #include <errno.h>
 #include <time.h>
-
+#include <stdint.h>
 #include "packetCapture.h"
 
 int getSocket()
@@ -40,7 +40,9 @@ can_packet packetCapture(int fd)
     while (1)
     {
         ssize_t n = read(fd, &frame, sizeof(can_packet));
-        time(&frame.timestamp);
+        struct timespec ts;
+        clock_gettime(CLOCK_REALTIME, &ts);
+        frame.timestamp = (ts.tv_sec * 1000000000) + ts.tv_nsec;
         if (n != -1)
         {
             return frame;

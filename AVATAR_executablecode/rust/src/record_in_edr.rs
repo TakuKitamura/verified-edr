@@ -1,6 +1,8 @@
 use once_cell::sync::Lazy;
 use std::sync::Mutex;
 
+use chrono::prelude::*;
+use chrono::Duration;
 use std::fs;
 use std::fs::OpenOptions;
 use std::io::prelude::*;
@@ -8,25 +10,30 @@ use std::io::prelude::*;
 #[no_mangle]
 pub extern "C" fn record_in_edr(
     can_id: u32,
-    timestamp: i64,
+    timestamp: u64,
     speed: u16,
     indicator: u8,
     door: u8,
 ) -> i32 {
     struct EventData {
+        timestamp: chrono::NaiveDateTime,
         can_id: u32,
-        timestamp: i64,
         speed: f64,
         indicator: u8,
         door: u8,
     }
     static STATIC_EVENT_DATA: Lazy<Mutex<Vec<EventData>>> = Lazy::new(|| Mutex::new(Vec::new()));
-    static STATIC_CRASH_TIMESTAMP: Lazy<Mutex<i64>> = Lazy::new(|| Mutex::new(-1));
+    static STATIC_CRASH_TIMESTAMP: Lazy<Mutex<chrono::NaiveDateTime>> =
+        Lazy::new(|| Mutex::new(NaiveDateTime::from_timestamp(0, 0)));
     static STATIC_BEFORE_SPEED_INDEX: Lazy<Mutex<usize>> = Lazy::new(|| Mutex::new(0));
 
     let mut event_data = STATIC_EVENT_DATA.lock().unwrap();
     let mut crash_timestamp = STATIC_CRASH_TIMESTAMP.lock().unwrap();
     let mut before_speed_index = STATIC_BEFORE_SPEED_INDEX.lock().unwrap();
+
+    let sec_part: u64 = timestamp / 1000000000; // 整数部
+    let nano_part: u64 = timestamp - (sec_part * 1000000000); // 小数部
+    let timestamp = NaiveDateTime::from_timestamp(sec_part as i64, nano_part as u32);
 
     if can_id == 0x1B4 {
         // speed
@@ -61,9 +68,11 @@ pub extern "C" fn record_in_edr(
             door: 0,
         });
 
+        let before_time = event_data[event_data.len() - 1].timestamp;
         // EDRへ書き込み
-        if *crash_timestamp != -1
-            && event_data[event_data.len() - 1].timestamp - *crash_timestamp >= 5
+        // let aaaa = chrono::Duration.secs(5);
+        if *crash_timestamp != NaiveDateTime::from_timestamp(0, 0)
+            && before_time - *crash_timestamp >= Duration::seconds(5)
         {
             let file_name = "edr.csv";
             let _ = fs::remove_file(file_name);
@@ -81,6 +90,22 @@ pub extern "C" fn record_in_edr(
 
             // loop event_data
             for i in 0..event_data.len() {
+                // Convert the timestamp string into an i64
+                // let timestamp = "1524820690".parse::<i64>().unwrap();
+
+                // Create a NaiveDateTime from the timestamp
+                // let recordedTimestamp = event_data[i].timestamp;
+                // let naive = NaiveDateTime::from_timestamp(event_data[i].timestamp, 0);
+
+                // Create a normal DateTime from the NaiveDateTime
+                // let datetime: DateTime<Utc> = DateTime::from_utc(event_data[i].timestamp, Utc);
+
+                // // Format the datetime how you want
+                // let newdate = datetime.format("%Y-%m-%d %H:%M:%S");
+
+                // // Print the newly formatted date and time
+                // println!("{}", newdate);
+
                 let event_can_id = event_data[i].can_id;
                 if event_can_id == 0x1B4 {
                     // speed
