@@ -1,9 +1,9 @@
 use once_cell::sync::Lazy;
 use std::sync::Mutex;
 
+use std::fs;
 use std::fs::OpenOptions;
 use std::io::prelude::*;
-use std::slice;
 
 #[no_mangle]
 pub extern "C" fn record_in_edr(
@@ -65,10 +65,13 @@ pub extern "C" fn record_in_edr(
         if *crash_timestamp != -1
             && event_data[event_data.len() - 1].timestamp - *crash_timestamp >= 5
         {
+            let file_name = "edr.csv";
+            let _ = fs::remove_file(file_name);
             let mut file = OpenOptions::new()
                 .write(true)
                 .append(true)
-                .open("edr.csv")
+                .create_new(true)
+                .open(file_name)
                 .unwrap();
 
             if let Err(e) = writeln!(file, "EVENT_NAME,TIMESTAMP,VALUE") {
