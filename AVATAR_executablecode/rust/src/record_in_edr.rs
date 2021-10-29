@@ -8,7 +8,7 @@ use std::fs::OpenOptions;
 use std::io::prelude::*;
 
 #[no_mangle]
-pub extern "C" fn record_in_edr(
+pub extern "C" fn recordInEDR(
     can_id: u32,
     timestamp: u64,
     speed: u16,

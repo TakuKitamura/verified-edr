@@ -152,7 +152,7 @@ void *mainFunc__EDRSystemBlock(void *arg)
             break;
 
         case STATE__RecordInEDRState:
-            recordInEDRResult = record_in_edr(canID, timestamp, speedValue, indicatorValue, doorValue);
+            recordInEDRResult = recordInEDR(canID, timestamp, speedValue, indicatorValue, doorValue);
             __currentState = STATE__CheckRecordInEDRResultState;
             break;
 
