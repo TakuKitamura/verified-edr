@@ -1,5 +1,6 @@
 #include <linux/can.h>
 #include <linux/can/raw.h>
+#include <stdint.h>
 
 int getSocket();
 
