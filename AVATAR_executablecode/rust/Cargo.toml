@@ -1,7 +1,6 @@
 [package]
 name = "rust"
 version = "1.0.0"
-authors = ["TakuKitamura <takukitamura.io@gmail.com>"]
 edition = "2018"
 
 
