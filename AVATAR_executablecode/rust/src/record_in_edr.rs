@@ -31,8 +31,10 @@ pub extern "C" fn recordInEDR(
 
     let mut event_data = STATIC_EVENT_DATA.lock().unwrap();
 
-    let sec_part: u64 = timestamp / 1000000000; // 整数部
-    let nano_part: u64 = timestamp - (sec_part * 1000000000); // 小数部
+    let sec_part: u64 = timestamp / 1000000; // 整数部
+
+    // microsecondをnanosecondに変換
+    let nano_part: u64 = (timestamp - (sec_part * 1000000)) * 1000; // 小数部
     let timestamp = NaiveDateTime::from_timestamp(sec_part as i64, nano_part as u32);
 
     let mut crashed_index: i32 = -1;

@@ -2,7 +2,7 @@
 #include <linux/can/raw.h>
 #include <stdint.h>
 
-int getSocket();
+int getSocket(void);
 
 typedef struct
 {
@@ -13,5 +13,3 @@ typedef struct
 } can_packet;
 
 can_packet packetCapture(int fd);
-
-void printFrame(can_packet frame);
