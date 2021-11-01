@@ -78,7 +78,7 @@ pub extern "C" fn recordInEDR(
         let speed_delta: f64 = now_speed - before_speed;
 
         // TODO: 衝突と判定する速度変化を決める
-        if speed_delta.abs() >= 10.0 {
+        if speed_delta.abs() >= 1.0 && event_data[last_item_index].crashed == false {
             println!("crashed!!!!!");
             event_data[last_item_index].crashed = true;
         }
@@ -147,11 +147,14 @@ pub extern "C" fn recordInEDR(
             // loop event_data
             for i in 0..event_data.len() {
                 let event_can_id = event_data[i].can_id;
+                let timestamp =
+                    DateTime::<Utc>::from_utc(event_data[i].timestamp, Utc).format("%+");
                 // speed
                 if let Err(e) = writeln!(
                     file,
                     "{},{},{},{}",
-                    event_data[i].timestamp,
+                    timestamp,
+                    event_data[i].crashed,
                     if event_can_id == speed_id {
                         "SPEED"
                     } else if event_can_id == indicator_id {
@@ -159,7 +162,6 @@ pub extern "C" fn recordInEDR(
                     } else {
                         "DOOR"
                     },
-                    event_data[i].crashed,
                     if event_can_id == speed_id {
                         event_data[i].speed.to_string()
                     } else if event_can_id == indicator_id {
