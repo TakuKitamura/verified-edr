@@ -2,8 +2,8 @@ module ParseDoor
 
 open LowStar.BufferOps
 open FStar.HyperStack.ST
-open LowStar.Printf
 open C.String
+open FStar.Int.Cast
 open HardCoding
 
 module I8 = FStar.Int8
@@ -24,8 +24,7 @@ val parseDoor_body:
   data: B.buffer U8.t ->
   
 Stack fstar_uint8 (requires fun h0 -> 
-    B.live h0 data /\
-    (((B.length data) = (8)) &&
+    B.live h0 data /\ (((B.length data) = (8)) &&
     (U32.eq can_id 0x19Bul) &&
     (U8.eq can_dlc 6uy) &&
     (U8.eq (B.get h0 data 0) 0uy) &&
@@ -37,11 +36,11 @@ Stack fstar_uint8 (requires fun h0 ->
   )
   (ensures fun h0 fstar_uint8 h1 -> 
     (((I32.eq fstar_uint8.error.code 0l) &&
-    ((B.get h0 data 2) = fstar_uint8.value)) ||
+    ((B.get h0 data 2) = fstar_uint8.value) &&
+    (U8.lte fstar_uint8.value 0x0Fuy)) ||
     (I32.eq fstar_uint8.error.code 1l))
   )
 let parseDoor_body can_id can_dlc data  =
-    // TODO: you need to implement this function here
     let door_state: U8.t = data.(2ul) in
     let ret: U8.t = door_state in
     if (U8.eq door_state ret) then
@@ -71,16 +70,15 @@ val parseDoor:
   data: B.buffer U8.t ->
   
   Stack fstar_uint8 (requires fun h0 -> 
-    B.live h0 data /\
-    (((B.length data) = (8)))
+    B.live h0 data /\ (((B.length data) = (8)))
   )
   (ensures fun h0 fstar_uint8 h1 -> 
     (((I32.eq fstar_uint8.error.code 0l) &&
-    ((B.get h0 data 2) = fstar_uint8.value)) ||
+    ((B.get h0 data 2) = fstar_uint8.value) &&
+    (U8.lte fstar_uint8.value 0x0Fuy)) ||
     (I32.eq fstar_uint8.error.code 1l))
   )
 let parseDoor can_id can_dlc data  = 
-    // meet the preconditions
     if (let v1 = data.(0ul) in
     let v2 = data.(1ul) in
     let v3 = data.(2ul) in
@@ -97,7 +95,6 @@ let parseDoor can_id can_dlc data  =
     (U8.eq v6 0uy))) then
         parseDoor_body can_id can_dlc data 
     else
-        // TODO: you need to return an error value here if the preconditions are not met
         {
             value = 0uy;
             error = {

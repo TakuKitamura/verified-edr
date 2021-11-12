@@ -2,7 +2,6 @@ module ParseSpeed
 
 open LowStar.BufferOps
 open FStar.HyperStack.ST
-open LowStar.Printf
 open C.String
 open FStar.Int.Cast
 open HardCoding
@@ -23,8 +22,8 @@ val parseSpeed_body:
   can_id: U32.t ->
   can_dlc: U8.t ->
   data: B.buffer U8.t ->
-
-Stack fstar_uint16 (requires fun h0 ->
+  
+Stack fstar_uint16 (requires fun h0 -> 
     B.live h0 data /\ (((B.length data) = (8)) &&
     (U32.eq can_id 0x1b4ul) &&
     (U8.eq can_dlc 5uy) &&
@@ -33,13 +32,12 @@ Stack fstar_uint16 (requires fun h0 ->
     (U8.eq (B.get h0 data 3) 0uy) &&
     (U8.eq (B.get h0 data 4) 0uy))
   )
-  (ensures fun h0 fstar_uint16 h1 ->
+  (ensures fun h0 fstar_uint16 h1 -> 
     (((I32.eq fstar_uint16.error.code 0l) &&
     (U16.lte fstar_uint16.value 0x2fd0us)) ||
     (I32.eq fstar_uint16.error.code 1l))
   )
 let parseSpeed_body can_id can_dlc data  =
-    // TODO: you need to implement this function here
     push_frame ();
     let first_speed_byte_u8: U8.t = data.(0ul) in
     let second_speed_byte_u8: U8.t = data.(1ul) in
@@ -58,21 +56,20 @@ let parseSpeed_body can_id can_dlc data  =
         };
     } 
 
-val parseSpeed:
+val parseSpeed: 
   can_id: U32.t ->
   can_dlc: U8.t ->
   data: B.buffer U8.t ->
-
-  Stack fstar_uint16 (requires fun h0 ->
+  
+  Stack fstar_uint16 (requires fun h0 -> 
     B.live h0 data /\ (((B.length data) = (8)))
   )
-  (ensures fun h0 fstar_uint16 h1 ->
+  (ensures fun h0 fstar_uint16 h1 -> 
     (((I32.eq fstar_uint16.error.code 0l) &&
     (U16.lte fstar_uint16.value 0x2fd0us)) ||
     (I32.eq fstar_uint16.error.code 1l))
   )
 let parseSpeed can_id can_dlc data  = 
-    // meet the preconditions
     if (let v1 = data.(1ul) in
     let v2 = data.(2ul) in
     let v3 = data.(3ul) in
@@ -85,7 +82,6 @@ let parseSpeed can_id can_dlc data  =
     (U8.eq v4 0uy))) then
         parseSpeed_body can_id can_dlc data 
     else
-        // TODO: you need to return an error value here if the preconditions are not met
         {
             value = 0us;
             error = {
@@ -93,4 +89,3 @@ let parseSpeed can_id can_dlc data  =
                 message = !$"invalid arguments";
             };
         }
-

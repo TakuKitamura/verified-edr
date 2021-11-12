@@ -2,8 +2,8 @@ module ParseIndicator
 
 open LowStar.BufferOps
 open FStar.HyperStack.ST
-open LowStar.Printf
 open C.String
+open FStar.Int.Cast
 open HardCoding
 
 module I8 = FStar.Int8
@@ -24,8 +24,7 @@ val parseIndicator_body:
   data: B.buffer U8.t ->
   
 Stack fstar_uint8 (requires fun h0 -> 
-    B.live h0 data /\
-    (((B.length data) = (8)) &&
+    B.live h0 data /\ (((B.length data) = (8)) &&
     (U32.eq can_id 0x188ul) &&
     (U8.eq can_dlc 4uy) &&
     (U8.lte (B.get h0 data 0) 0x02uy) &&
@@ -35,11 +34,11 @@ Stack fstar_uint8 (requires fun h0 ->
   )
   (ensures fun h0 fstar_uint8 h1 -> 
     (((I32.eq fstar_uint8.error.code 0l) &&
-    ((B.get h0 data 0) = fstar_uint8.value)) ||
+    ((B.get h0 data 0) = fstar_uint8.value) &&
+    (U8.lte fstar_uint8.value 0x02uy)) ||
     (I32.eq fstar_uint8.error.code 1l))
   )
 let parseIndicator_body can_id can_dlc data  =
-    // TODO: you need to implement this function here
     let indicatorState: U8.t = data.(0ul) in
     let ret: U8.t = indicatorState in
     if (U8.eq indicatorState ret) then
@@ -69,16 +68,15 @@ val parseIndicator:
   data: B.buffer U8.t ->
   
   Stack fstar_uint8 (requires fun h0 -> 
-    B.live h0 data /\
-    (((B.length data) = (8)))
+    B.live h0 data /\ (((B.length data) = (8)))
   )
   (ensures fun h0 fstar_uint8 h1 -> 
     (((I32.eq fstar_uint8.error.code 0l) &&
-    ((B.get h0 data 0) = fstar_uint8.value)) ||
+    ((B.get h0 data 0) = fstar_uint8.value) &&
+    (U8.lte fstar_uint8.value 0x02uy)) ||
     (I32.eq fstar_uint8.error.code 1l))
   )
 let parseIndicator can_id can_dlc data  = 
-    // meet the preconditions
     if (let v1 = data.(0ul) in
     let v2 = data.(1ul) in
     let v3 = data.(2ul) in
@@ -91,7 +89,6 @@ let parseIndicator can_id can_dlc data  =
     (U8.eq v4 0uy))) then
         parseIndicator_body can_id can_dlc data 
     else
-        // TODO: you need to return an error value here if the preconditions are not met
         {
             value = 0uy;
             error = {
