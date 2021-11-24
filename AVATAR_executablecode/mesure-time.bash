@@ -7,4 +7,4 @@ time for run in {1..10}; do
     time (python3 main.py `ls ../misrac/*.c` &> /dev/null) 2>> ../mesured-time/misrac-check.log;
     cd ..
     time (make -f Makefile.compile &> /dev/null) 2>> mesured-time/compile.log;
-done 2> mesured-time/all.log
+done > mesured-time/all.log
